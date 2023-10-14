@@ -12,6 +12,6 @@ RUN CGO_ENABLED=0 \
 FROM scratch
 WORKDIR /requestprinter
 COPY --from=builder /app/requestprinter /requestprinter/server
-USER nobody
+USER 10000
 ENTRYPOINT ["/requestprinter/server"]
 CMD ["-url", "-headers", "-body", "-method"]
