@@ -82,6 +82,7 @@ func main() {
 		log.Println(string(jsonData))
 		fmt.Fprint(w, "Ok")
 	})
+
 	log.Printf("Starting server on :%d", *port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), nil))
 }
