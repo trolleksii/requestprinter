@@ -18,18 +18,18 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Restore Go modules
-        id: go-modules-cache
-        uses: actions/cache@v3
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-gomod-${{ hashFiles('go.mod', 'go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-gomod-
+      # - name: Restore Go modules
+      #   id: go-modules-cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ~/go/pkg/mod
+      #     key: ${{ runner.os }}-gomod-${{ hashFiles('go.mod', 'go.sum') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-gomod-
 
-      - name: Download Go modules
-        if: steps.go-modules-cache.outputs.cache-hit != 'true'
-        run: go mod download
+      # - name: Download Go modules
+      #   if: steps.go-modules-cache.outputs.cache-hit != 'true'
+      #   run: go mod download
 
       - name: Build the app
         run: |
