@@ -1,0 +1,39 @@
+name: Build the binary
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches: [main]
+
+jobs:
+  build:
+    name: Build the binary
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Restore Go modules
+        id: go-modules-cache
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-gomod-${{ hashFiles('go.mod', 'go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-gomod-
+
+      - name: Download Go modules
+        if: steps.go-modules-cache.outputs.cache-hit != 'true'
+        run: go mod download
+
+      - name: Build the app
+        run: |
+          export CGO_ENABLED=0
+          export GOOS=linux
+
+          go build main.go
