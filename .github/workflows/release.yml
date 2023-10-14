@@ -3,10 +3,10 @@ name: Initiate the release
 on:
   push:
     branches: [main]
-  paths:
-    - "Dockerfile"
-    - "go.mod"
-    - "main.go"
+    paths:
+      - "Dockerfile"
+      - "go.mod"
+      - "main.go"
 
 concurrency:
   group: main
