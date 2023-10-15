@@ -9,7 +9,6 @@ RUN CGO_ENABLED=0 \
     -o requestprinter \
     .
 
-
 FROM scratch
 WORKDIR /requestprinter
 COPY --from=builder /app/requestprinter /requestprinter/server
