@@ -5,9 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
-	"os"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -76,9 +74,9 @@ func main() {
 			log.Error().Err(err).Msg("Error encoding JSON")
 			return
 		}
-		log.Info().Msg(string(jsonData))
+		log.Info().RawJSON("Request", jsonData).Msg("")
 		fmt.Fprint(w, "Ok")
 	})
 	log.Info().Msgf("Starting server on :%d", *port)
-	log.Fatal().Err(http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)).Msg("Serving")
+	log.Fatal().Err(http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)).Msg("")
 }
