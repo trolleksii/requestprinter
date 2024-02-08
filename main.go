@@ -8,12 +8,15 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 func getBody(r *http.Request) interface{} {
 	bodyBytes, err := io.ReadAll(r.Body)
 	if err != nil {
-		log.Printf("Error reading request body: %v", err)
+		log.Error().Err(err).Msg("Error reading request body")
 		return map[string]string{}
 	}
 	defer r.Body.Close()
@@ -24,7 +27,7 @@ func getBody(r *http.Request) interface{} {
 
 	var payload interface{}
 	if err := json.Unmarshal(bodyBytes, &payload); err != nil {
-		log.Printf("Error parsing JSON payload: %v", err)
+		log.Error().Err(err).Msg("Error parsing JSON payload")
 		payload = string(bodyBytes)
 	}
 	return payload
@@ -42,21 +45,15 @@ func getHeaders(r *http.Request) map[string]string {
 
 func main() {
 	var port = flag.Int("port", 8080, "Server port, default: 8080")
-	var logTime = flag.Bool("time", false, "Log the time of the request, default: false")
 	var logURL = flag.Bool("url", false, "Log the URL of the request, default: false")
 	var logHeaders = flag.Bool("headers", false, "Log the headers of the request, default: false")
 	var logBody = flag.Bool("body", false, "Log the headers of the request, default: false")
 	var logMethod = flag.Bool("method", false, "Log the method of the request, default: false")
 	flag.Parse()
 
-	if !*logTime {
-		log.SetFlags(0)
-	}
-
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	if !*logURL && !*logHeaders && !*logBody && !*logMethod {
-		log.SetOutput(io.Discard)
-	} else {
-		log.SetOutput(os.Stdout)
+		zerolog.SetGlobalLevel(zerolog.FatalLevel)
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -76,12 +73,12 @@ func main() {
 
 		jsonData, err := json.Marshal(response)
 		if err != nil {
-			log.Printf("Error encoding JSON: %v", err)
+			log.Error().Err(err).Msg("Error encoding JSON")
 			return
 		}
-		log.Println(string(jsonData))
+		log.Info().Msg(string(jsonData))
 		fmt.Fprint(w, "Ok")
 	})
-	log.Printf("Starting server on :%d", *port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), nil))
+	log.Info().Msgf("Starting server on :%d", *port)
+	log.Fatal().Err(http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)).Msg("Serving")
 }
