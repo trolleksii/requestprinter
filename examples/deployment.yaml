@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: requestprinter
+  namespace: default
+  labels:
+    app: requestprinter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: requestprinter
+  template:
+    metadata:
+      labels:
+        app: requestprinter
+    spec:
+      containers:
+        - name: requestprinter
+          image: ghcr.io/trolleksii/requestprinter:latest
+          command:
+            - /requestprinter/server
+            - -url
+            - -method
+            - -headers
+            - -body
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
